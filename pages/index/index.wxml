@@ -1,0 +1,56 @@
+<view class="userinfo">
+  <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover" bindtap="chooseImage"></image>
+  <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+</view>
+
+<view class="tableviewcell">
+  <text></text>
+  <text></text>
+  <text></text>
+  <image src="../../../images/icon_rmb.png" />
+  <text>所剩余额</text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text>¥  {{money}}</text>
+  <text></text>
+  <text></text>
+  <image bindtap="reflash" src="../../../images/icon_reflash.png" />
+</view>
+<view class="tableviewcell">
+  <text></text>
+  <text></text>
+  <text></text>
+  <image src="../../../images/icon_phone.png" />
+  <text>绑定电话</text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text>{{phone_num}}</text>
+</view>
+<view bindtap="navigateToRecords" class="tableviewcell">
+  <text></text>
+  <text></text>
+  <text></text>
+  <image src="../../../images/icon_zhangdan.png" />
+  <text>账单记录</text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <text></text>
+  <image src="../../../images/icon_jiantou.png" />
+</view>
+<button bindtap="get_paynum" class="logout">获取支付密码</button>
