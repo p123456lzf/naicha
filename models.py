@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from config import db
 
-class User(db.Model):
+class User2(db.Model):
     user_id = db.Column(db.String(63),primary_key=True)
     user_name = db.Column(db.String(63), unique=True)
     phone_num =  db.Column(db.String(63), unique=True)

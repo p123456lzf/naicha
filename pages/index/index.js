@@ -4,14 +4,24 @@ const app = getApp()
 
 Page({
   data: {
+    guanliyuan: false,
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    phone_num: 13051578517,
-    money:1000
+    phone_num: '',
+    money: 0,
+    hidden: true,
+    hidden2: true,
+    inputVal: "",
+    inputShowed: false,
   },
   //事件处理函数
+  inputTyping: function (e) {
+    this.setData({
+      inputVal: e.detail.value
+    });
+  },
   navigateToRecords: function () {
     wx.navigateTo({
       url: '../records/records'
@@ -21,19 +31,98 @@ Page({
     wx.showLoading({
       title: '刷新中',
     })
-    wx.hideLoading()
+    const that = this
+    wx: wx.request({
+      url: 'https://www.ikjmls.cn/user2/' + app.globalData.openid + '/name/' + app.globalData.name,
+      success: function (res) {
+        var money = res.data.data[0].money
+        that.setData({
+          money: money,
+        })
+        wx.hideLoading()
+        wx.showToast({
+          title: '刷新成功',
+        })
+      },
+      fail: function (res) { },
+      complete: function (res) { },
+    })
+
   },
   get_paynum: function () {
-    wx.showModal({
-      title: '123456',
-      content: '密码2分钟内有效',
-      showCancel: false
+    const that = this
+    wx: wx.request({
+      url: 'https://www.ikjmls.cn/pay_num/' + app.globalData.openid,
+      success: function (res) {
+        console.log(res)
+        var paynum = res.data.pay_num
+        that.setData({
+          paynum: paynum,
+          hidden2: false,
+        })
+      },
+      fail: function (res) { },
+      complete: function (res) { },
     })
-    
+  },
+  confirm: function (e) {
+    console.log(e)
+    if (this.data.inputVal != '' && this.data.inputVal.length == 11) {
+      const that = this
+      var phone_num = this.data.inputVal
+      wx: wx.request({
+        url: 'https://www.ikjmls.cn/user/' + app.globalData.openid + '/phone/' + phone_num,
+        success: function (res) {
+          that.setData({
+            hidden: true,
+            phone_num: phone_num,
+          })
+        },
+        fail: function (res) { },
+        complete: function (res) { },
+      })
+    } else {
+      wx.showModal({
+        title: '请输入正确的手机号!',
+        content: '',
+        showCancel: false
+      })
+    }
+  },
+  confirm2: function (e) {
+    this.setData({
+      hidden2: true,
+    })
   },
   onLoad: function () {
     const that = this
+    if (app.globalData.openid == 'oRFFN5StOZOjVbVGeS4zq_Xdsq1g'){
+      that.setData({
+        guanliyuan: true
+      })
+    }
     setTimeout(function () {
+      wx: wx.request({
+        url: 'https://www.ikjmls.cn/user2/' + app.globalData.openid + '/name/' + app.globalData.name,
+        success: function (res) {
+          if (res.data.ok == 1 && res.data.data.phone_num != '') {
+            console.log(res)
+            var money = res.data.data[0].money
+            var phone_num = res.data.data[0].phone_num
+            that.setData({
+              money: money,
+              phone_num: phone_num,
+            })
+          }
+          else {
+            that.setData({
+              hidden: false,
+            })
+          }
+        },
+        fail: function (res) { },
+        complete: function (res) { },
+      })
       if (app.globalData.userInfo) {
         that.setData({
           userInfo: app.globalData.userInfo,
@@ -61,6 +150,7 @@ Page({
         })
       }
     }, 1000)
+
   },
   getUserInfo: function (e) {
     console.log(e)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from config import app,db
-from models import User
+from models import User2
 import datetime
 import requests
 import random
@@ -12,7 +12,7 @@ from flask import render_template
 # Done
 @app.route('/delete_paynum/<user_id>')
 def delete_paynum(user_id):
-    User.query.filter_by(user_id=user_id).update({'pay_num': '------'})
+    User2.query.filter_by(user_id=user_id).update({'pay_num': '------'})
     db.session.commit()
 
 @app.route('/image/<image>')
@@ -40,11 +40,11 @@ def get_openid2(code):
 
 # 用于第一次登陆，如果此人是第一次登陆，则建库储存个人基本信息(ok为0表示此用户第一次登陆，为1表示老用户）
 #  Done
-@app.route('/user/<user_id>/name/<name>')
+@app.route('/user2/<user_id>/name/<name>')
 def setup_user2(user_id,name):
-    the_user = User.query.filter_by(user_id=user_id).first()
+    the_user = User2.query.filter_by(user_id=user_id).first()
     if the_user == None:
-        user = User(user_id=user_id, user_name=name, phone_num='', money=0, record='', pay_num='------' )
+        user = User2(user_id=user_id, user_name=name, phone_num='', money=0, record='', pay_num='------' )
         db.session.add(user)
         db.session.commit()
         results_json = "{\"ok\":0,\"data\":[{"
@@ -69,7 +69,7 @@ def setup_user2(user_id,name):
 @app.route('/user/<user_id>/phone/<num>')
 def save_phone(user_id,num):
     try:
-        User.query.filter_by(user_id=user_id).update({'phone_num': str(num)})
+        User2.query.filter_by(user_id=user_id).update({'phone_num': str(num)})
         db.session.commit()
     except Exception as e:
         return "{\"ok\":0}"
@@ -81,7 +81,7 @@ def save_phone(user_id,num):
 def get_paynum(user_id):
     try:
         num = random.randint(100000,999999)
-        User.query.filter_by(user_id=user_id).update({'pay_num': str(num)})
+        User2.query.filter_by(user_id=user_id).update({'pay_num': str(num)})
         db.session.commit()
         result_json = "{\"pay_num\":" + str(num) + ",\"ok\":1}"
         timer = threading.Timer(120, delete_paynum, (user_id,))
@@ -94,13 +94,13 @@ def get_paynum(user_id):
 # Done
 @app.route('/nvaueph8793q/phone_num/<phone_num>/money/<money>')
 def recharge(phone_num,money):
-    the_user = User.query.filter_by(phone_num=phone_num).first()
+    the_user = User2.query.filter_by(phone_num=phone_num).first()
     new_money = float(the_user.money) + float(money)
-    User.query.filter_by(phone_num=phone_num).update({'money': str(new_money)})
+    User2.query.filter_by(phone_num=phone_num).update({'money': str(new_money)})
     record = the_user.record
     nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     record += str(nowTime) + "充值：" + str(money) + "元；余额：" + str(new_money) + "元,"
-    User.query.filter_by(phone_num=phone_num).update({'record': record})
+    User2.query.filter_by(phone_num=phone_num).update({'record': record})
     db.session.commit()
     result_json = "{\"money\":" + str(new_money) + ",\"ok\":1}"
     return result_json
@@ -108,16 +108,16 @@ def recharge(phone_num,money):
 #根据支付密码消费，返回余额，还要储存消费记录
 @app.route('/pay_num/<pay_num>/money/<money>')
 def consume(pay_num,money):
-    the_user = User.query.filter_by(pay_num=pay_num).first()
+    the_user = User2.query.filter_by(pay_num=pay_num).first()
     new_money = float(the_user.money) - float(money)
     if(new_money < 0):
         return "{\"ok\":0}"
     else:
-        User.query.filter_by(pay_num=pay_num).update({'money': str(new_money)})
+        User2.query.filter_by(pay_num=pay_num).update({'money': str(new_money)})
         record = the_user.record
         nowTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         record += str(nowTime) + "消费：" + str(money) + "元；余额：" + str(new_money) + "元,"
-        User.query.filter_by(pay_num=pay_num).update({'record': record})
+        User2.query.filter_by(pay_num=pay_num).update({'record': record})
         db.session.commit()
         result_json = "{\"money\":" + str(new_money) + ",\"ok\":1}"
         return result_json
@@ -126,7 +126,7 @@ def consume(pay_num,money):
 # Done
 @app.route('/record/<phone_num>')
 def record(phone_num):
-    the_user = User.query.filter_by(phone_num=phone_num).first()
+    the_user = User2.query.filter_by(phone_num=phone_num).first()
     result_json = "{\"record\":\"" + the_user.record + "\",\"ok\":1}"
     return result_json
 

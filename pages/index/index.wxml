@@ -1,4 +1,18 @@
-<view class="userinfo">
+<modal hidden="{{hidden}}" no-cancel="true" title="请绑定手机号" confirm-text="确定" bindconfirm="confirm">
+  <input class="weui-search-bar__input" type="number" placeholder="手机号是以后用来充值的必须信息" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" />
+</modal>
+<modal hidden="{{hidden2}}" no-cancel="true" title="{{paynum}}" confirm-text="确定" bindconfirm="confirm2">
+<text>密码两分钟后失效哦</text>
+</modal>
+<view wx:if="{{guanliyuan}}">
+<input class="weui-search-bar__input" type="number" placeholder="手机号" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" />
+<button>充值</button>
+<input class="weui-search-bar__input" type="number" placeholder="消费密码" value="{{inputVal}}" focus="{{inputShowed}}" bindinput="inputTyping" />
+<button>消费</button>
+</view>
+<view wx:else>
+<button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+<view wx:else class="userinfo">
   <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover" bindtap="chooseImage"></image>
   <text class="userinfo-nickname">{{userInfo.nickName}}</text>
 </view>
@@ -54,3 +68,4 @@
   <image src="../../../images/icon_jiantou.png" />
 </view>
 <button bindtap="get_paynum" class="logout">获取支付密码</button>
+</view>
